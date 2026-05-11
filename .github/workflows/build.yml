@@ -11,25 +11,23 @@ jobs:
         python-version: ['3.11']
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install dependencies
+      - name: Install Sleuth Kit
+        run: choco install sleuthkit --no-progress
+
+      - name: Install tools
         run: |
           python -m pip install --upgrade pip
-          pip install wheel
+          pip install wheel setuptools
 
-      - name: Build pytsk3 wheel
-        run: |
-          pip wheel pytsk3 --wheel-dir=dist
+      - name: Build wheel
+        run: pip wheel pytsk3 --wheel-dir=dist
 
-      - name: Upload wheel as artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: pytsk3-wheel-cp${{ matrix.python-version }}-win_amd64
+          name: pytsk3-wheel
           path: dist/*.whl
